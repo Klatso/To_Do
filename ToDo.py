@@ -3,8 +3,8 @@ class Task:
         self.name = name
         self.is_completed = False
 
-    def mark_completed(self):
-        self.is_completed = True
+    def set_completed(self, status):
+        self.is_completed = status
 
 
 class ToDoList:
@@ -19,13 +19,6 @@ class ToDoList:
             if task.name == name:
                 self.tasks.remove(task)
 
-                return
-        # aufgabe nicht gefunden
-
-    def mark_completed(self, name):
-        for task in self.tasks:
-            if task.name == name:
-                task.mark_completed()
                 return
         # aufgabe nicht gefunden
 
