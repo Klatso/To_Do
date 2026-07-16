@@ -115,5 +115,4 @@ def main():
         else:
             print("\nUngültige Eingabe")
 
-
-main()
+    main()
