@@ -1,10 +1,17 @@
 class Task:
-    def __init__(self, name):
+    def __init__(self, name, is_completed=False):
         self.name = name
-        self.is_completed = False
+        self.is_completed = is_completed
 
     def set_completed(self, status):
         self.is_completed = status
+
+    def to_dict(self):
+        return {"name": self.name, "is_completed": self.is_completed}
+
+    @staticmethod
+    def from_dict(data):
+        return Task(data["name"], data["is_completed"])
 
 
 class ToDoList:
@@ -22,26 +29,10 @@ class ToDoList:
                 return
         # aufgabe nicht gefunden
 
-    def edit_task(self, name, changed_attribute):
+    def rename_task(self, name, new_name):
         for task in self.tasks:
             if task.name == name:
-                if changed_attribute == "name":
-                    # task.name = input("Gib den neuen Namen ein!")
-                    # name geändert
-                    pass
-                elif changed_attribute == "status":
-                    """
-                    als erledigt markieren?
-                    if change_status == "j":
-                        task.mark_completed()
-                        #als erledigt markiert
-                    elif change_status == "n":
-                        task.is_completed = False
-                        #als nicht erledigt markiert
-                    """
-                else:
-                    pass
-                # name nicht gefunden
+                task.name = new_name
                 return
 
     def show_tasks(self):
