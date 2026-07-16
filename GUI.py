@@ -3,6 +3,8 @@ import ToDo
 
 todo = ToDo.ToDoList()
 
+todo.load()
+
 window = tk.Tk()
 window.title("ToDo-Liste")
 window.geometry("350x400")
@@ -53,8 +55,7 @@ def create_labels(task_object):
             task_field,
             variable=var,
             command=lambda obj=obj, var=var: (
-                obj.set_completed(var.get()),
-                # print(obj.name, obj.is_completed)
+                obj.set_completed(var.get()), todo.save(),
             )
         )
         checkbox.grid(row=index, column=0)

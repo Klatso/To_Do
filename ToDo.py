@@ -1,3 +1,6 @@
+import json
+
+
 class Task:
     def __init__(self, name, is_completed=False):
         self.name = name
@@ -15,26 +18,36 @@ class Task:
 
 
 class ToDoList:
-    def __init__(self):
+    def __init__(self, filename="tasks.json"):
         self.tasks = []
+        self.filename = filename
 
     def add_task(self, task):
         self.tasks.append(task)
+        self.save()
 
     def delete_task(self, name):
         for task in self.tasks:
             if task.name == name:
                 self.tasks.remove(task)
-
+                self.save()
                 return
-        # aufgabe nicht gefunden
 
     def rename_task(self, name, new_name):
         for task in self.tasks:
             if task.name == name:
                 task.name = new_name
+                self.save()
                 return
 
-    def show_tasks(self):
-        for task in self.tasks:
-            print(str(task))
+    def save(self):
+        with open(self.filename, "w") as f:
+            json.dump([task.to_dict() for task in self.tasks], f)
+
+    def load(self):
+        try:
+            with open(self.filename, "r") as f:
+                data = json.load(f)
+                self.tasks = [Task.from_dict(entry) for entry in data]
+        except FileNotFoundError:
+            self.tasks = []
