@@ -8,12 +8,13 @@ todo.load()
 window = tk.Tk()
 window.title("ToDo-Liste")
 window.geometry("350x400")
-
+window.configure(bg="#f0f0f0")
 window.rowconfigure(1, minsize=20)
 
 window.columnconfigure(0, weight=1)
 
-title = tk.Label(window, text="Aufgaben")
+title = tk.Label(window, text="Aufgaben", font=(
+    "TkDefaultFont", 16, "bold"), bg="#f0f0f0")
 title.grid(row=0, column=0)
 
 task_field = tk.Frame(window)
@@ -22,7 +23,7 @@ task_field.grid(row=2, column=0, sticky="ew")
 task_field.columnconfigure(0, weight=1)
 task_field.columnconfigure(1, weight=3)
 task_field.columnconfigure(2, weight=1)
-
+task_field.configure(bg="#f0f0f0")
 task_field.rowconfigure(len(todo.tasks)+1, minsize=30)
 
 task_input = None
@@ -37,9 +38,11 @@ def show_input_field():
     editing_task = None
 
     task_input = tk.Entry(task_field)
-    task_input.grid(row=len(todo.tasks)+1, column=1, sticky="ew")
-    task_input.grid_configure(row=len(todo.tasks)+1)
+    task_input.grid(row=len(todo.tasks)+1, column=0,
+                    columnspan=3, sticky="ew", padx=10)
 
+    button_add.grid(row=len(todo.tasks)+2, column=0,
+                    columnspan=3, sticky="ew", padx=10)
     button_add.config(text="✓", command=confirm_input)
 
 
@@ -54,25 +57,39 @@ def create_labels(task_object):
         checkbox = tk.Checkbutton(
             task_field,
             variable=var,
+            bg="#f0f0f0",
             command=lambda obj=obj, var=var: (
-                obj.set_completed(var.get()), todo.save(),
+                obj.set_completed(var.get()), todo.save(
+                ), create_labels(todo.tasks),
             )
         )
         checkbox.grid(row=index, column=0)
 
-        label = tk.Label(task_field, text=obj.name)
-        label.grid(row=index, column=1, sticky="w")
-        label.bind("<Button-3>", lambda e, obj=obj: show_context_menu(e, obj))
+        label_task = tk.Label(task_field, text=obj.name, bg="#f0f0f0")
+        label_task.grid(row=index, column=1, sticky="w")
+        label_task.bind("<Button-3>", lambda e,
+                        obj=obj: show_context_menu(e, obj))
 
-    button_add = tk.Button(task_field, text="+", width=20,
-                           borderwidth=1, relief="solid", highlightthickness=0,  command=show_input_field)
+        time_string = (obj.time_created if not obj.is_completed else obj.time_completed).strftime(
+            "%d.%m.%Y %H:%M")
+        label_time_created_or_completed = "Erstellt:" if not obj.is_completed else "Erledigt:"
+        label_time = tk.Label(
+            task_field, text=f"{label_time_created_or_completed} {time_string}", font=("TkDefaultFont", 8), bg="#f0f0f0")
+        label_time.grid(row=index, column=2, sticky="w")
 
-    button_row = len(task_object)
+    button_add = tk.Button(task_field, text="+",
+                           borderwidth=1, relief="flat", highlightthickness=1, highlightbackground="#888888",
+                           bg="#f0f0f0", activebackground="#e0e0e0",  command=show_input_field)
+
+    button_row = len(task_object) + 1
 
     if input_open:
         button_row += 1
 
-    button_add.grid(row=button_row, column=1, sticky="ew")
+    task_field.rowconfigure(len(task_object), minsize=15)
+
+    button_add.grid(row=button_row, column=0,
+                    columnspan=3, sticky="ew", padx=10)
 
     button_add.bind("<Enter>", lambda e: button_add.config(
         text="Aufgabe hinzufügen")if not input_open else None)
@@ -82,8 +99,10 @@ def create_labels(task_object):
 
 def show_context_menu(event, obj):
     menu = tk.Menu(window, tearoff=0)
-    menu.add_command(label="bearbeiten", command=lambda: rename_task(obj))
-    menu.add_command(label="löschen", command=lambda: delete_task(obj))
+    menu.add_command(label="Aufgabe umbenennen",
+                     command=lambda: rename_task(obj))
+    menu.add_command(label="Aufgabe entfernen",
+                     command=lambda: delete_task(obj))
     menu.tk_popup(event.x_root, event.y_root)
 
 
