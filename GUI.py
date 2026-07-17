@@ -86,7 +86,7 @@ def create_labels(task_object):
     if input_open:
         button_row += 1
 
-    task_field.rowconfigure(len(task_object), minsize=15)
+    task_field.rowconfigure(len(task_object), minsize=10)
 
     button_add.grid(row=button_row, column=0,
                     columnspan=3, sticky="ew", padx=10)
